@@ -1,0 +1,23 @@
+* {
+    box-sizing: border-box;
+}
+
+.categories, .contents{
+    display: inline-block;
+}
+
+.remove-display{
+    display :none;
+}
+
+
+.category{
+    display: block;
+}
+.category:hover, .add-category-link{
+    cursor: pointer;
+}
+
+.contents{
+    vertical-align: top;
+}

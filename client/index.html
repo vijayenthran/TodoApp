@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="main.css">
+    <title>ToDo List</title>
+</head>
+<body>
+<main>
+    <section class="categories">
+        <h2>Categories</h2>
+        <section class="categories-list"></section>
+        <a class="add-category-link">+ Add Category</a>
+        <form class="add-categories-form remove-display" action="/">
+            <fieldset class="add-categories-form-fieldset">
+                <legend class="add-categories-form-legend">+ Add</legend>
+                <input type="text" placeholder="e.g. Watch Movies" class="add-categories-form-text"/>
+                <input type="submit" class="add-categories-form-submit"/>
+            </fieldset>
+        </form>
+    </section>
+    <section class="contents" data-categoryname="" data-categoryid="">
+        <h2 class="contents-heading"></h2>
+        <ul class="contents-list" >
+        </ul>
+    </section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="index.js"></script>
+</body>
+</html>
