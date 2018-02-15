@@ -18,6 +18,21 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/recent-five-updates', (req, res) => {
+   return contents.find({}).sort('-createdAt').then(docs=>{
+       let topdocs =  docs.filter((doc, index) =>index <= topdocsCount-1);
+       res.status(200).json(topdocs)
+   });
+});
+
+router.get('/recent-five-created', (req, res) => {
+    let topdocsCount = req.query.count;
+    return contents.find({}).sort('-updatedAt').then(docs=>{
+        let topdocs =  docs.filter((doc, index) =>index <= topdocsCount-1);
+        res.status(200).json(topdocs)
+    });
+});
+
 router.post('/', (req, res) => {
     const content = req.body;
     return contents.create(content).then(content => {
