@@ -3,35 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>ToDo List</title>
 </head>
 <body>
 <main class="main">
+    <section class="top-bar">
+        <section class="top-bar-menu">
+            <img src="./files/menu.png" alt="Burger Menu" class="top-bar-burger-icon">
+            <img src="./files/cancel.png" alt="Cancel Icon to Close Burger Menu" class="top-bar-cancel-icon remove-display">
+        </section>
+        <h1 class="top-bar-header">TODO APP</h1>
+        <section class="top-bar-Sec">
+            <a class="top-bar-ShowCompleted"><u>Show Completed</u></a>
+            <a class="top-bar-Sync"><u>Sync Latest5</u></a>
+        </section>
+    </section>
+    <section class="category-menu">
+        <section class="categories">
+            <h2 class="categories-header">Categories</h2>
+            <section class="categories-list"></section>
+            <a class="add-category-link"><u>+ Add Category</u></a>
+            <form class="add-categories-form remove-display" action="/">
+                <fieldset class="add-categories-form-fieldset">
+                    <input type="text" placeholder="e.g. Watch Movies" class="add-categories-form-text" required/>
+                    <input type="submit" class="add-categories-form-submit" value="Add"/>
+                </fieldset>
+            </form>
+        </section>
+    </section>
     <section class="categories">
-        <h2>Categories</h2>
+        <h2 class="categories-header">Categories</h2>
         <section class="categories-list"></section>
-        <a class="add-category-link">+ Add Category</a>
+        <a class="add-category-link"><u>+ Add Category</u></a>
         <form class="add-categories-form remove-display" action="/">
             <fieldset class="add-categories-form-fieldset">
-                <legend class="add-categories-form-legend">+ Add</legend>
-                <input type="text" placeholder="e.g. Watch Movies" class="add-categories-form-text"/>
-                <input type="submit" class="add-categories-form-submit"/>
+                <input type="text" placeholder="e.g. Watch Movies" class="add-categories-form-text" required/>
+                <input type="submit" class="add-categories-form-submit" value="Add"/>
             </fieldset>
         </form>
     </section>
-    <section class="contents" data-categoryname="" data-categoryid="">
+    <section class="contents" data-categoryname="" data-categoryid="" data-uncomplete="">
         <h2 class="contents-heading"></h2>
-        <ul class="contents-list" >
+        <section class="add-content-div">
+            <a class="add-content-link"><u>+ Add task</u></a>
+        </section>
+        <ul class="contents-list">
         </ul>
+        <section class="completed-latest-contents remove-display">
+            <h2 class="completed-latest-contents-head"></h2>
+            <div aria-label="Close Completed PopUp Box" class="completed-latest-contents-close">x</div>
+        </section>
     </section>
-    <section class="widjets"><p>Hello I am there</p>
+    <section class="widjet">
+        <h2 class="widjet-head">Latest 5</h2>
+        <section class="latest-created-Categories">
+            <h3>Created</h3>
+        </section>
+        <section class="latest-updated-Categories">
+            <h3>Updated</h3>
+        </section>
     </section>
-    <section class="error">
+    <section class="error success edit-success warning">
     </section>
-    <section class="success">
+    <section class="delete-warning-popup remove-display">
+        <p class="delete-warning-popup-text"></p>
+        <input type="button" value="Confirm" class="delete-warning-popup-confirm">
+        <a class="delete-warning-popup-cancel"><u>Cancel</u></a>
     </section>
-    <section class="edit-success">
-    </section>
+    <footer class="footer">
+        <p>Managed By: Abecedarian</p>
+        <p>Contact: <a href="mailto:tharan.vijay@example.com" class="footer-mail">tharan.vijay@gmail.com</a>.</p>
+    </footer>
+    <section class="outer-Overlay remove-display"></section>
+    <section class="left-menu-overlay remove-display"></section>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="index.js"></script>

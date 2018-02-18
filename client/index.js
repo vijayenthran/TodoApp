@@ -3,19 +3,70 @@
 
 let serverCallCategory = (function () {
 
-    function populateCategories(categories) {
-        const element = categories.map(category => {
-            return `<a class="category category-${category.name}" data-category="${category.name}" data-id="${category._id}">${category.name}</a>`;
+    function _populateCategories(categories) {
+        const element = categories.map(category=>{
+            if(category.name === 'Today' || category.name === 'Personal' || category.name ==='Errands' || category.name ==='Movies to Watch' || category.name ==='Groceries'){
+                return `<table class="category-table">
+            <tbody class="category-table-body">
+                <tr class="category-table-category">
+                    <td class="category-table-category-name"><a class="category category-${category.name}" data-category="${category.name}" data-id="${category._id}">${category.name}</a></td>
+                    <td class="category-table-category-meatball remove-display"><img class="category-table-meatball-div" src="files/meatball.png" alt="meatball menu icon"></td>
+                </tr>
+                <tr class="category-buttons-row remove-display">
+                    <td class="category-table-edit">
+                        <input type="button" value="Edit" class="category-buttons category-table-edit-button"/>
+                        <input type="button" value="Save" class="category-buttons category-table-save-button remove-display"/>
+                        <input type="button" value="Delete" class="category-buttons category-table-delete-button"/>
+                        <a class="category-buttons category-table-cancel-link"><u>cancel</u></a>
+                    </td>
+                </tr>
+            </tbody>
+          </table>`
+            }else{
+                return `<table class="category-table">
+            <tbody class="category-table-body">
+                <tr class="category-table-category">
+                    <td class="category-table-category-name"><a class="category category-${category.name}" data-category="${category.name}" data-id="${category._id}">${category.name}</a></td>
+                    <td class="category-table-category-meatball"><img class="category-table-meatball-div" src="files/meatball.png" alt="meatball menu icon"></td>
+                </tr>
+                <tr class="category-buttons-row remove-display">
+                    <td class="category-table-edit">
+                        <input type="button" value="Edit" class="category-buttons category-table-edit-button"/>
+                        <input type="button" value="Save" class="category-buttons category-table-save-button remove-display"/>
+                        <input type="button" value="Delete" class="category-buttons category-table-delete-button"/>
+                        <a class="category-buttons category-table-cancel-link"><u>cancel</u></a>
+                    </td>
+                </tr>
+            </tbody>
+          </table>`
+            }
+
         });
         $('.categories-list').append(element);
+        $('.category-menu-category-list').append(element);
         return;
     }
+
+    // function populateCategories(categories) {
+    //     const element = categories.map(category => {
+    //         return `<a class="category category-${category.name}" data-category="${category.name}" data-id="${category._id}">${category.name}</a>`;
+    //     });
+    //     $('.categories-list').append(element);
+    //     return;
+    // }
 
     function _ajaxGetCategories() {
         $.ajax('/categories', {
             method: 'GET',
             success: function (obj) {
-                populateCategories(obj);
+                $('.categories-list').find('.category-table').remove();
+                $('.contents').find('.completedContents').remove();
+                $('.latest-created-Categories').find('.latest-created-Categories-content').remove();
+                $('.latest-updated-Categories').find('.latest-updated-Categories-content').remove();
+                _populateCategories(obj);
+                let categoryid = $('.categories-list').find('.category-Today').attr('data-id');
+                serverCallContents.ajaxGetContents('Today', categoryid);
+                showFilters.ajaxFilters();
                 return;
             },
             error: function (err) {
@@ -47,13 +98,8 @@ let serverCallContents = (function () {
         return;
     }
 
-    function clearAddContentsLink() {
-        $('.contents').find('.add-content-div').remove();
-        return;
-    }
-
     function appendElementsUtil(element) {
-    const constaddContent = `<div class="add-content-div"><a class="add-content-link">+ Add task</a></div>`;
+    // const constaddContent = `<div class="add-content-div"><a class="add-content-link">+ Add task</a></div>`;
         const formElement = `<form class="add-content-form remove-display" action="/">
            <fieldset class="add-content-form-fieldset">
                <textarea rows="4" cols="50" name="comment" placeholder="e.g. Remind me About something" class="add-content-form-textArea" required></textarea>
@@ -61,17 +107,23 @@ let serverCallContents = (function () {
                <a class="add-content-form-cancel"><u>Cancel</u></a>
            </fieldset>
         </form>`;
-        element.push(constaddContent);
+        // element.push(constaddContent);
         element.push(formElement);
         element.push(`<input type="button" class="completedContents" value="show-completed"/>`);
         return;
     }
 
     function populateContents(contents, categoryVal, id) {
+        let contentsLen= contents.length;
         clearPreviousConents();
         $('.contents').attr('data-categoryname', categoryVal);
         $('.contents').attr('data-categoryid', id);
-        $('.contents-heading').text(`${categoryVal}`);
+        $('.contents').attr('data-uncomplete', contentsLen);
+        if(contentsLen === 0){
+            $('.contents-heading').text(`No Tasks Present for "${categoryVal}", Click "+ Add Task" to create one`);
+        }else{
+            $('.contents-heading').text(`${categoryVal}`);
+        }
         const element = contents.map(content => {
             return `<li class="content" data-contentid="${content._id}">
                         <table class="content-table">
@@ -93,7 +145,7 @@ let serverCallContents = (function () {
                             </tbody>
                         </table>
 
-</li>`;
+                    </li>`;
         });
         appendElementsUtil(element);
         $('.contents-list').append(element);
@@ -102,10 +154,10 @@ let serverCallContents = (function () {
 
     function _getContents() {
         $('.categories').on('click', '.category', function () {
-            clearAddContentsLink();
+            $('.delete-warning-popup').addClass('remove-display');
             clearButtons();
             clearForm();
-            let categoryVal = $(this).data('category');
+            let categoryVal = $(this).attr('data-category');
             let id = $(this).data('id');
             _ajaxGetContents(categoryVal, id);
         });
@@ -131,6 +183,7 @@ let serverCallContents = (function () {
     }
 
     return {
+        ajaxGetContents : _ajaxGetContents,
         getContents: _getContents,
     };
 })();
@@ -142,9 +195,11 @@ let handleCompletedContents = (function () {
         $('.contents-list').on('click', '.content-table-checkbox', function () {
             let contentVal = $(this).closest('.content-table').find('.content-table-text-div').text();
             let id = $(this).closest('.content').attr('data-contentid');
+            let categoryname= $(this).closest('.contents').attr('data-categoryname');
             $(this).closest('.content-table').remove();
             const updatedObj = {
                 _id: id,
+                categoryname :categoryname,
                 content : contentVal,
                 completed: true
             };
@@ -178,11 +233,23 @@ let handleCompletedContents = (function () {
 let handleShowCompletedContents = (function () {
 
     function _showCompletedContents() {
-        $('.contents').on('click', '.completedContents', function () {
+        $('.top-bar').on('click', '.top-bar-ShowCompleted', function () {
             let categoryid = $('.contents').attr('data-categoryid');
             _ajaxShowCompleted(categoryid);
         });
         return;
+    }
+
+    function displayShowCompleted (objs) {
+        $('.completed-latest-contents').find('.completed-contents').remove();
+        const element = objs.map(obj=>{
+            return `<p class="completed-contents">${obj.content}</p>`
+        });
+        let categoryNAme = $('.completed-latest-contents').closest('.contents').attr('data-categoryname');
+        $('.completed-latest-contents-head').text(`Completed Items of "${categoryNAme}"`);
+        $('.completed-latest-contents').append(element);
+        $('.completed-latest-contents').removeClass('remove-display');
+        $('.outer-Overlay').removeClass('remove-display');
     }
 
     function _ajaxShowCompleted(categoryid) {
@@ -193,6 +260,7 @@ let handleShowCompletedContents = (function () {
                 completed: true
             },
             success: function (obj) {
+                displayShowCompleted(obj);
                 console.log(obj)
             },
             error: function (err) {
@@ -205,6 +273,35 @@ let handleShowCompletedContents = (function () {
     return {
         showCompletedContents: _showCompletedContents
     }
+
+    // function _showCompletedContents() {
+    //     $('.contents').on('click', '.completedContents', function () {
+    //         let categoryid = $('.contents').attr('data-categoryid');
+    //         _ajaxShowCompleted(categoryid);
+    //     });
+    //     return;
+    // }
+    //
+    // function _ajaxShowCompleted(categoryid) {
+    //     $.ajax('/contents', {
+    //         method: 'GET',
+    //         data: {
+    //             categoryid: categoryid,
+    //             completed: true
+    //         },
+    //         success: function (obj) {
+    //             console.log(obj)
+    //         },
+    //         error: function (err) {
+    //             console.log(err);
+    //             throw err;
+    //         }
+    //     });
+    // }
+    //
+    // return {
+    //     showCompletedContents: _showCompletedContents
+    // }
 
 })();
 
@@ -255,13 +352,14 @@ let handleAddContents = (function () {
                     </tr>
                 </tbody>
             </li>`;
-        $(element).insertBefore($('.contents').find('.add-content-div'));
+        $(element).insertBefore($('.contents').find('.add-content-form'));
         return;
     }
 
     function _ajaxAddContents(contentValue, id, categoryName) {
         const obj = {
             categoryid: id,
+            categoryname: categoryName,
             content: contentValue,
             completed: false
         };
@@ -272,9 +370,11 @@ let handleAddContents = (function () {
             dataType: "json",
             success: function (obj) {
                 appendElements(obj, contentValue);
+                $('.contents-heading').text(categoryName);
                 _displaySuccess(categoryName, successhelp);
             },
             error: function (err) {
+                $('.contents-heading').text(`Content not added to ${categoryName}, Please contact Admin`);
                 console.log(err);
                 throw err;
             }
@@ -292,7 +392,7 @@ let addCategories = (function () {
 
     function _displayAddCategory() {
         $('.add-category-link').click(function () {
-            $('.add-categories-form').toggle('remove-display');
+            $('.add-categories-form').toggle('fast');
         });
         return;
     }
@@ -302,12 +402,31 @@ let addCategories = (function () {
             event.preventDefault();
             let categoryVal = $('.add-categories-form-text').val();
             _ajaxAddCategory(categoryVal);
+            $('.add-categories-form-text').val('');
         });
         return;
     }
 
+
+
     function _addNewCategory(obj) {
-        const element = `<a class="category category-${obj.name}" data-category="${obj.name}" data-id="${obj._id}">${obj.name}</a>`;
+        // const element = `<a class="category category-${obj.name}" data-category="${obj.name}" data-id="${obj._id}">${obj.name}</a>`;
+        const element = `    <table class="category-table">
+            <tbody class="category-table-body">
+                <tr class="category-table-category">
+                    <td class="category-table-category-name"><a class="category category-${obj.name}" data-category="${obj.name}" data-id="${obj._id}">${obj.name}</a></td>
+                    <td class="category-table-category-meatball"><img class="category-table-meatball-div" src="files/meatball.png" alt="meatball menu icon"></td>
+                </tr>
+                <tr class="category-buttons-row remove-display">
+                    <td class="category-table-edit">
+                        <input type="button" value="Edit" class="category-buttons category-table-edit-button"/>
+                        <input type="button" value="Save" class="category-buttons category-table-save-button remove-display"/>
+                        <input type="button" value="Delete" class="category-buttons category-table-delete-button"/>
+                        <a class="category-buttons category-table-cancel-link"><u>cancel</u></a>
+                    </td>
+                </tr>
+            </tbody>
+          </table>`;
         $('.categories').find('.categories-list').append(element);
         return;
     }
@@ -339,6 +458,7 @@ let addCategories = (function () {
                 _addNewCategory(obj);
             },
             error: function (err) {
+                console.log(err);
                 let errMessage = JSON.parse(err.responseText);
                 _displayError(errMessage.op.name, errorhelp);
             }
@@ -383,7 +503,8 @@ let handleEditContents = (function () {
             $(this).addClass('remove-display');
             let updatedText = $(target).closest('.content-table').find('.content-table-text-div').text();
             let contentId = $(target).closest('.content').attr('data-contentid');
-            _ajaxEditContents(updatedText, contentId);
+            let categoryName = $(target).closest('.contents').attr('data-categoryname');
+            _ajaxEditContents(updatedText, contentId, categoryName);
         });
     }
 
@@ -407,9 +528,10 @@ let handleEditContents = (function () {
         });
     }
 
-    function _ajaxEditContents (updatedText, contentId) {
+    function _ajaxEditContents (updatedText, contentId, categoryName) {
         const updatedObj={
                 _id: contentId,
+                categoryname: categoryName,
                 content: updatedText,
                 completed: false
         };
@@ -436,12 +558,11 @@ let handleEditContents = (function () {
 
 let handleDeleteContents = (function () {
     function _deleteContent() {
-        $('.contents-list').on('click', '.content-table-delete', function () {
+        $('.contents-list').on('click', '.content-table-delete-button', function () {
             let id = $(this).closest('.content').attr('data-contentid');
-            $(this).closest('tr').remove();
-            _ajaxDeleteContent(id)
+            $(this).closest('.content-table').remove();
+            _ajaxDeleteContent(id);
         });
-        return;
     }
 
     function _ajaxDeleteContent(id){
@@ -458,7 +579,6 @@ let handleDeleteContents = (function () {
                 throw err;
             }
         });
-
     }
 
     return {
@@ -467,9 +587,326 @@ let handleDeleteContents = (function () {
 
 })();
 
+let handleEditCategories = (function () {
+    let text;
+    function handleMaxCategory(textVal){
+        if(textVal.length >=22){
+            return 'longText';
+        }else if(textVal.length <=1){
+            return 'smallText'
+        }
+    }
+
+    function warninghelp() {
+        setTimeout(function () {
+            $('.warning').removeClass('warning-Animate');
+            $('.warning').text('');
+        }, 3000);
+    }
+
+    function _warning(callback) {
+        $('.warning').addClass('warning-Animate');
+        $('.warning').text(`Warning!!! "Name should be between 1 and 22 Chars"`);
+        callback();
+        return;
+    }
+
+    function errorhelp() {
+        setTimeout(function () {
+            $('.error').removeClass('error-Animate');
+            $('.error').text('');
+        }, 3000);
+    }
+
+    function _displayError(name, callback) {
+        $('.error').addClass('error-Animate');
+        $('.error').text(`ERROR!!! "${name}" already Exists`);
+        callback();
+        return;
+    }
+
+    function _editCategory() {
+        $('.categories-list').on('click', '.category-table-edit-button', function () {
+            text = $(this).closest('.category-table').find('.category-table-category-name .category-temp').text();
+            $(this).closest('.category-table').find('.category-table-category-name .category-temp').attr('contenteditable','true');
+            $(this).closest('.category-table').find('.category-table-category-name .category-temp').addClass('border');
+            $(this).closest('.category-table').find('.category-table-save-button').removeClass('remove-display');
+            $(this).addClass('remove-display');
+            _updateCategoryName()
+        });
+    }
+
+    function _handleCancel() {
+        $('.categories-list').on('click', '.category-table-cancel-link', function(){
+            if(text){
+                $(this).closest('.category-table').find('.category-table-category-name .category-temp').text(text);
+            }
+            $('.delete-warning-popup').addClass('remove-display');
+            $(this).closest('.category-table').find('.category-table-save-button').addClass('remove-display');
+            $(this).closest('.category-table').find('.category-table-edit-button').removeClass('remove-display');
+            $(this).closest('.category-table').find('.category-table-category-name .category-temp').removeClass('border');
+            $(this).closest('.category-table').find('.category-table-category-name .category-temp').removeAttr('contenteditable');
+            $(this).closest('.category-table').find('.category-buttons-row').addClass('remove-display');
+            $(this).closest('.category-table').find('.category-table-category-name .category-temp').removeClass('category-temp').addClass('category');
+            text ='';
+        });
+    }
+
+    function editSuccessHelp() {
+        setTimeout(function () {
+            $('.edit-success').removeClass('edit-success-Animate');
+            $('.edit-success').text('');
+        }, 3000);
+    }
+
+    function _displaySuccessEdit(callback) {
+        $('.edit-success').addClass('edit-success-Animate');
+        $('.edit-success').text(`Successfully !! Edited Category`);
+        callback();
+        return;
+    }
+
+    function clearElementsUtil(target){
+        $(target).addClass('remove-display');
+        $(target).closest('.category-table').find('.category-table-edit-button').removeClass('remove-display');
+        $(target).closest('.category-table').find('.category-table-category-name .category-temp').removeClass('border');
+        $(target).closest('.category-table').find('.category-buttons-row').addClass('remove-display');
+        $(target).closest('.category-table').find('.category-table-category-name .category-temp').removeAttr('contenteditable');
+        $(target).closest('.category-table').find('.category-table-category-name .category-temp').removeClass('category-temp').addClass('category');
+        return;
+    }
+
+    function updateCategoryNameinConetentsSec(textVal){
+        let contentHeadingVal =  $('.contents-heading').text();
+        if(text === contentHeadingVal){
+            $('.contents-heading').text(`${textVal}`);
+            $('.categories-list').find(`.category-${text}`).addClass(`category-${textVal}`);
+            $('.categories-list').find(`.category-${textVal}`).removeClass(`category-${text}`);
+            $('.categories-list').find(`.category-${textVal}`).attr('data-category', textVal);
+        }
+        return;
+    }
+
+
+    function _updateCategoryName(){
+        $('.categories-list').on('click', '.category-table-save-button', function () {
+            let textVal = $(this).closest('.category-table').find('.category-table-category-name .category-temp').text();
+            let id = $(this).closest('.category-table').find('.category-temp').attr('data-id');
+            let lengthVal = handleMaxCategory(textVal);
+            if(lengthVal === 'longText' || lengthVal === 'smallText'){
+                if(text){
+                    $(this).closest('.category-table').find('.category-table-category-name .category-temp').text(text);
+                }
+                _warning(warninghelp);
+                clearElementsUtil(this);
+                text = '';
+                return;
+            }else{
+                updateCategoryNameinConetentsSec(textVal);
+              _ajaxUpdateCategoryName(id, textVal, this);
+                clearElementsUtil(this);
+                text = '';
+            }
+        });
+    }
+
+    function _ajaxUpdateCategoryName(id, textVal, target){
+        const updatedObj = {
+            id :id,
+            name: textVal
+        };
+        $.ajax('/categories', {
+            method: 'PUT',
+            data: JSON.stringify(updatedObj),
+            success: function () {
+                _displaySuccessEdit(editSuccessHelp);
+            },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: function (err) {
+                if(text){
+                    $(target).closest('.category-table').find('.category-table-category-name .category').text(text);
+                }
+                text='';
+                console.log(err);
+                _displayError(textVal, errorhelp);
+            }
+        });
+    }
+
+    return {
+        handleCancel: _handleCancel,
+        editCategory: _editCategory
+    }
+})();
+
+let handleDeleteCategories = (function () {
+
+    function _handleConfirmDelete(target, categoryId){
+        _ajaxDeleteCategory(categoryId);
+            $('.delete-warning-popup').addClass('remove-display');
+            $(target).closest('.category-table').remove();
+            $('.contents-heading').text('Category and Content Removed, Choose other Categories To Manage or Create New Category');
+            $('.contents-list').find('.content').remove();
+            $('.contents-list').find('.add-content-form').remove();
+            return;
+    }
+
+    function _handleCancelDelete(target){
+        $('.delete-warning-popup').addClass('remove-display');
+        $(target).closest('.category-table').find('.category-table-save-button').addClass('remove-display');
+        $(target).closest('.category-table').find('.category-table-edit-button').removeClass('remove-display');
+        $(target).closest('.category-table').find('.category-table-category-name .category-temp').removeClass('border');
+        $(target).closest('.category-table').find('.category-table-category-name .category-temp').removeAttr('contenteditable');
+        $(target).closest('.category-table').find('.category-buttons-row').addClass('remove-display');
+        $(target).closest('.category-table').find('.category-table-category-name .category-temp').removeClass('category-temp').addClass('category');
+        return;
+    }
+
+    function _deleteConfirmation(target, categoryId){
+        $('.delete-warning-popup').removeClass('remove-display');
+        $('.delete-warning-popup').on('click', '.delete-warning-popup-cancel', function(event){
+            event.stopImmediatePropagation();
+            _handleCancelDelete(target);
+        });
+        $('.delete-warning-popup').on('click', '.delete-warning-popup-confirm', function(event){
+            event.stopImmediatePropagation();
+            _handleConfirmDelete(target, categoryId);
+        });
+    }
+
+    function AddText(len) {
+        if(len === 0){
+            $('.delete-warning-popup-text').text(`No Items Presnt - Do you Still Want to Delete?`);
+        }else{
+            $('.delete-warning-popup-text').text(`"${len}" Uncompleted Items Present-Do you Still Want to Delete?`);
+        }
+        return;
+    }
+
+    function _deleteCategories(){
+        $('.categories-list').on('click', '.category-table-delete-button', function () {
+            let categorytext= $(this).closest('.category-table').find('.category-table-category-name a').text();
+            let categoryId = $(this).closest('.category-table').find(`.category-${categorytext}`).attr('data-id');
+            _deleteConfirmation(this, categoryId);
+            _ajaxGetContents(categoryId);
+        });
+    }
+
+    function _ajaxDeleteCategory(id){
+        $.ajax('/categories',{
+            method: 'DELETE',
+            data: JSON.stringify({_id:id}),
+            success: function () {
+                _ajaxDeleteContent(id);
+            },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: function (err) {
+                console.log(err);
+                throw err;
+            }
+        });
+    }
+
+    function _ajaxDeleteContent(id){
+        $.ajax('contents/removeall',{
+            method: 'DELETE',
+            data: JSON.stringify({contentid:id}),
+            success: function () {
+                return;
+            },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            error: function (err) {
+                console.log(err);
+                throw err;
+            }
+        });
+    }
+
+    function _ajaxGetContents(id) {
+        $.ajax('/contents', {
+            method: 'GET',
+            data: {
+                categoryid: id,
+                completed: false
+            },
+            success: function (obj) {
+                AddText(obj.length);
+                return;
+            },
+            error: function (err) {
+                console.log(err);
+                throw err;
+            }
+        });
+    }
+
+    return{
+        deleteCategories:_deleteCategories,
+    }
+})();
+
+let showFilters = (function(){
+    function displayLatest(obj){
+        let topFiveUpdates = obj.topFiveUpdates;
+        let topRecentCreated = obj.topRecentCreated;
+
+        const elementUpdate = topFiveUpdates.map(elem=>{
+            if(elem.content.length >15){
+                elem.content = elem.content.substring(0,15) + '..';
+            }
+            return `<p class="latest-updated-Categories-content">${elem.content} - "${elem.categoryname}"</p>`
+        });
+
+        const elementCreated = topRecentCreated.map(elem=>{
+            if(elem.content.length >15){
+                elem.content = elem.content.substring(0,15) + '..';
+            }
+            return `<p class="latest-created-Categories-content">${elem.content} - "${elem.categoryname}"</p>`
+        });
+        $('.latest-created-Categories').append(elementCreated);
+        $('.latest-updated-Categories').append(elementUpdate);
+    }
+
+    function _displayFilters() {
+        $('.top-bar-Sync').click(function () {
+            $('.latest-created-Categories').find('p').remove();
+            $('.latest-updated-Categories').find('p').remove();
+            _ajaxFilters();
+        });
+    }
+
+    function _ajaxFilters() {
+        $.ajax('/contents/filters', {
+            method:'GET',
+            success : function(obj){
+                displayLatest(obj);
+            },
+            error: function (err) {
+                console.log(err);
+                throw err;
+            }
+        });
+    }
+
+    return{
+        ajaxFilters : _ajaxFilters,
+        displayFilters : _displayFilters,
+    }
+})();
 
 function handleMeatBallClick() {
     $('.contents-list').on('click', '.content-table-meatball', function(){
+        if($(this).closest('.content-table').find('.content-table-text-div').attr('contenteditable')){
+            $(this).closest('.content-table').find('.content-table-text-div').removeAttr('contenteditable');
+            $(this).closest('.content-table').find('.content-table-text-div').removeClass('border');
+        }
+        if($(this).closest('.content-table').find('.content-table-edit-button').hasClass('remove-display')){
+            $(this).closest('.content-table').find('.content-table-edit-button').removeClass('remove-display');
+            $(this).closest('.content-table').find('.content-table-save-button').addClass('remove-display');
+        }
         if($(this).closest('.content-table').find('.content-buttons-row').hasClass('remove-display')){
             $(this).closest('.content-table').find('.content-buttons-row').removeClass('remove-display')
         }else{
@@ -479,6 +916,26 @@ function handleMeatBallClick() {
     return;
 }
 
+function handleRotatedMeatBallClick() {
+    $('.categories-list').on('click', '.category-table-category-meatball', function () {
+        let textVal=$(this).closest('.category-table').find('.category-table-category-name a').text();
+        if($(this).closest('.category-table').find(`.category-${textVal}`).attr('contenteditable')){
+            $(this).closest('.category-table').find(`.category-${textVal}`).removeAttr('contenteditable');
+            $(this).closest('.category-table').find(`.category-${textVal}`).removeClass('border');
+        }
+        if($(this).closest('.category-table').find('.category-table-edit-button').hasClass('remove-display')){
+            $(this).closest('.category-table').find('.category-table-edit-button').removeClass('remove-display');
+            $(this).closest('.category-table').find('.category-table-save-button').addClass('remove-display');
+        }
+        if($(this).closest('.category-table').find('.category-buttons-row').hasClass('remove-display')){
+            $(this).closest('.category-table').find('.category-buttons-row').removeClass('remove-display');
+            $(this).closest('.category-table').find('.category-table-category-name .category').removeClass('category').addClass('category-temp');
+        }else{
+            $(this).closest('.category-table').find('.category-table-category-name .category-temp').removeClass('category-temp').addClass('category');
+            $(this).closest('.category-table').find('.category-buttons-row').addClass('remove-display');
+        }
+    });
+}
 
 
 function handleTick() {
@@ -491,8 +948,9 @@ function handleTick() {
 }
 
 function handleShowForm(){
-    $('.contents-list').on('click', '.add-content-div', function() {
-        $(this).closest('.contents-list').find('.add-content-form').removeClass('remove-display');
+    $('.contents').on('click', '.add-content-div', function() {
+        $('.contents-list').find('.add-content-form').removeClass('remove-display');
+        $('.contents-list').find('.add-content-form').find('textArea').focus();
     });
 }
 
@@ -503,9 +961,41 @@ function handleCancelForm(){
     });
 }
 
+function handleCloseCompletedPopUp(){
+  $('.completed-latest-contents-close').click(function(){
+      $('.completed-latest-contents').addClass('remove-display');
+      $('.outer-Overlay').addClass('remove-display');
+  });
+}
+
+function handleBurgerMenuClick() {
+    $('.top-bar-burger-icon').click(function () {
+        serverCallCategory.ajaxGetCategories();
+        $(this).addClass('remove-display');
+        $('.top-bar-cancel-icon').removeClass('remove-display');
+        $('.left-menu-overlay').removeClass('remove-display');
+        // $('.category-menu').removeClass('remove-display');
+        $('.category-menu').addClass('transform-left');
+    });
+
+}
+
+function handleCancelMenuClick() {
+    $('.top-bar-cancel-icon').click(function () {
+        serverCallCategory.ajaxGetCategories();
+        $(this).addClass('remove-display');
+        $('.top-bar-burger-icon').removeClass('remove-display');
+        $('.category-menu').removeClass('transform-left');
+        $('.left-menu-overlay').addClass('remove-display');
+    });
+
+}
+
+
 function main() {
-    serverCallCategory.ajaxGetCategories();
+    showFilters.displayFilters();
     serverCallContents.getContents();
+    serverCallCategory.ajaxGetCategories();
     handleCompletedContents.removeCompletedContents();
     handleShowCompletedContents.showCompletedContents();
     handleAddContents.addContents();
@@ -513,11 +1003,18 @@ function main() {
     addCategories.displayAddCategory();
     addCategories.addCategory();
     handleMeatBallClick();
+    handleRotatedMeatBallClick();
     handleTick();
     handleShowForm();
     handleCancelForm();
+    handleDeleteCategories.deleteCategories();
+    handleEditCategories.handleCancel();
+    handleEditCategories.editCategory();
     handleEditContents.handleCancel();
     handleDeleteContents.deleteContent();
+    handleCloseCompletedPopUp();
+    handleBurgerMenuClick();
+    handleCancelMenuClick();
     return;
 }
 

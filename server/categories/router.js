@@ -3,7 +3,7 @@ const router = express.Router();
 const {categories} = require('./model');
 const logger = require('../../logger');
 
-const dataFeed = [{name: 'Groceries'}, {name: 'Personal'}];
+const dataFeed = [{name: 'Today'}, {name: 'Personal'}, {name: 'Errands'}, {name: 'Movies to Watch'}, {name:'Groceries'}];
 
 function inserData() {
     return categories.insertMany(dataFeed)
@@ -40,7 +40,7 @@ router.post('/', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-    let updateCategory = {name: req.body.updateCategory};
+    let updateCategory = {_id: req.body.id};
     return categories.findOneAndUpdate(updateCategory, {name: req.body.name})
         .then(data => {
             res.status(200).json(data);

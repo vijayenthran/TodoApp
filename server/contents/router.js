@@ -18,18 +18,24 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/recent-five-updates', (req, res) => {
-   return contents.find({}).sort('-createdAt').then(docs=>{
-       let topdocs =  docs.filter((doc, index) =>index <= topdocsCount-1);
-       res.status(200).json(topdocs)
-   });
-});
-
-router.get('/recent-five-created', (req, res) => {
-    let topdocsCount = req.query.count;
-    return contents.find({}).sort('-updatedAt').then(docs=>{
-        let topdocs =  docs.filter((doc, index) =>index <= topdocsCount-1);
-        res.status(200).json(topdocs)
+router.get('/filters', (req, res) => {
+    let _topFiveUpdates;
+    let _topRecentCreated;
+    return contents.find({}).sort('-createdAt').then(docs => {
+        _topRecentCreated = docs.filter((doc, index) => index <= 4);
+        return;
+    }).then(() => {
+        return contents.find({}).sort('-updatedAt')
+    }).then(docs=>{
+        _topFiveUpdates = docs.filter((doc, index) =>index <= 4);
+        let obj = {
+            topFiveUpdates: _topFiveUpdates,
+            topRecentCreated : _topRecentCreated
+        };
+        res.status(200).json(obj)
+    }).catch(err => {
+        logger.Error(err);
+        res.status(500).send(err);
     });
 });
 
@@ -39,13 +45,13 @@ router.post('/', (req, res) => {
         res.status(201).send(content)
     }).catch(err => {
         logger.Error(err);
-        throw err;
+        res.status(500).send(err);
     });
 });
 
 router.put('/', (req, res) => {
     let updateContent = {_id: req.body._id};
-    let updateObj = {content: req.body.content, completed: req.body.completed};
+    let updateObj = {content: req.body.content, completed: req.body.completed, categoryname:req.body.categoryname};
     return contents.findOneAndUpdate(updateContent, updateObj)
         .then(data => {
             res.status(200).json(data);
@@ -57,6 +63,16 @@ router.put('/', (req, res) => {
 
 router.delete('/', (req, res) => {
     return contents.deleteOne(req.body)
+        .then((data)=> {
+            res.status(200).json(data);
+        }).catch(err => {
+            logger.Error(err);
+            res.status(500).send(err);
+        });
+});
+
+router.delete('/removeall', (req, res) => {
+    return contents.deleteMany(req.body)
         .then((data)=> {
             res.status(200).json(data);
         }).catch(err => {
