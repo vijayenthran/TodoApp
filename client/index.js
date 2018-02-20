@@ -47,14 +47,6 @@ let serverCallCategory = (function () {
         return;
     }
 
-    // function populateCategories(categories) {
-    //     const element = categories.map(category => {
-    //         return `<a class="category category-${category.name}" data-category="${category.name}" data-id="${category._id}">${category.name}</a>`;
-    //     });
-    //     $('.categories-list').append(element);
-    //     return;
-    // }
-
     function _ajaxGetCategories() {
         $.ajax('/categories', {
             method: 'GET',
@@ -99,7 +91,6 @@ let serverCallContents = (function () {
     }
 
     function appendElementsUtil(element) {
-    // const constaddContent = `<div class="add-content-div"><a class="add-content-link">+ Add task</a></div>`;
         const formElement = `<form class="add-content-form remove-display" action="/">
            <fieldset class="add-content-form-fieldset">
                <textarea rows="4" cols="50" name="comment" placeholder="e.g. Remind me About something" class="add-content-form-textArea" required></textarea>
@@ -107,9 +98,6 @@ let serverCallContents = (function () {
                <a class="add-content-form-cancel"><u>Cancel</u></a>
            </fieldset>
         </form>`;
-        // element.push(constaddContent);
-        element.push(formElement);
-        element.push(`<input type="button" class="completedContents" value="show-completed"/>`);
         return;
     }
 
@@ -233,7 +221,7 @@ let handleCompletedContents = (function () {
 let handleShowCompletedContents = (function () {
 
     function _showCompletedContents() {
-        $('.top-bar').on('click', '.top-bar-ShowCompleted', function () {
+        $('.contents').on('click', '.show-completed-link', function () {
             let categoryid = $('.contents').attr('data-categoryid');
             _ajaxShowCompleted(categoryid);
         });
@@ -273,36 +261,6 @@ let handleShowCompletedContents = (function () {
     return {
         showCompletedContents: _showCompletedContents
     }
-
-    // function _showCompletedContents() {
-    //     $('.contents').on('click', '.completedContents', function () {
-    //         let categoryid = $('.contents').attr('data-categoryid');
-    //         _ajaxShowCompleted(categoryid);
-    //     });
-    //     return;
-    // }
-    //
-    // function _ajaxShowCompleted(categoryid) {
-    //     $.ajax('/contents', {
-    //         method: 'GET',
-    //         data: {
-    //             categoryid: categoryid,
-    //             completed: true
-    //         },
-    //         success: function (obj) {
-    //             console.log(obj)
-    //         },
-    //         error: function (err) {
-    //             console.log(err);
-    //             throw err;
-    //         }
-    //     });
-    // }
-    //
-    // return {
-    //     showCompletedContents: _showCompletedContents
-    // }
-
 })();
 
 let handleAddContents = (function () {
@@ -352,7 +310,7 @@ let handleAddContents = (function () {
                     </tr>
                 </tbody>
             </li>`;
-        $(element).insertBefore($('.contents').find('.add-content-form'));
+        $('.contents-list').append(element);
         return;
     }
 
@@ -410,7 +368,6 @@ let addCategories = (function () {
 
 
     function _addNewCategory(obj) {
-        // const element = `<a class="category category-${obj.name}" data-category="${obj.name}" data-id="${obj._id}">${obj.name}</a>`;
         const element = `    <table class="category-table">
             <tbody class="category-table-body">
                 <tr class="category-table-category">
@@ -866,12 +823,16 @@ let showFilters = (function(){
             }
             return `<p class="latest-created-Categories-content">${elem.content} - "${elem.categoryname}"</p>`
         });
+        $('.latest-created-Categories').find('p').remove();
+        $('.latest-updated-Categories').find('p').remove();
+        $('.menu-latest-created-Categories').append(elementCreated);
         $('.latest-created-Categories').append(elementCreated);
         $('.latest-updated-Categories').append(elementUpdate);
+        $('.menu-latest-updated-Categories').append(elementUpdate);
     }
 
     function _displayFilters() {
-        $('.top-bar-Sync').click(function () {
+        $('.contents').on('click','.sync-Latest-link', function () {
             $('.latest-created-Categories').find('p').remove();
             $('.latest-updated-Categories').find('p').remove();
             _ajaxFilters();
@@ -895,6 +856,34 @@ let showFilters = (function(){
         ajaxFilters : _ajaxFilters,
         displayFilters : _displayFilters,
     }
+})();
+
+let handleLatestFilterMenu = (function(){
+
+    function _latestFilterCreated(){
+        $('.menu-toggle-latest5-link-created').click(function(){
+            $('.menu-latest-updated-Categories').addClass('remove-display');
+            $('.menu-latest-updated-Categories').removeClass('menu-toggle-latest5-selected');
+            $('.menu-latest-created-Categories').removeClass('remove-display');
+            $(this).addClass('menu-toggle-latest5-selected');
+            $('.menu-toggle-latest5-link-updated').removeClass('menu-toggle-latest5-selected');
+        });
+    }
+
+    function _latestFilterUpdated() {
+        $('.menu-toggle-latest5-link-updated').click(function () {
+            $('.menu-latest-created-Categories').addClass('remove-display');
+            $('.menu-latest-created-Categories').removeClass('menu-toggle-latest5-selected');
+            $('.menu-latest-updated-Categories').removeClass('remove-display');
+            $(this).addClass('menu-toggle-latest5-selected');
+            $('.menu-toggle-latest5-link-created').removeClass('menu-toggle-latest5-selected');
+        });
+    }
+    return{
+        latestFilterUpdated :_latestFilterUpdated,
+        latestFilterCreated :_latestFilterCreated
+    }
+
 })();
 
 function handleMeatBallClick() {
@@ -948,14 +937,14 @@ function handleTick() {
 }
 
 function handleShowForm(){
-    $('.contents').on('click', '.add-content-div', function() {
-        $('.contents-list').find('.add-content-form').removeClass('remove-display');
-        $('.contents-list').find('.add-content-form').find('textArea').focus();
+    $('.contents').on('click', '.add-content-div .add-content-link', function() {
+        $('.contents').find('.add-content-form').removeClass('remove-display');
+        $('.contents').find('.add-content-form').find('textArea').focus();
     });
 }
 
 function handleCancelForm(){
-    $('.contents-list').on('click', '.add-content-form-cancel', function(){
+    $('.add-content-form').on('click', '.add-content-form-cancel', function(){
        $(this).closest('.add-content-form').find('textArea').val('');
        $(this).closest('.add-content-form').addClass('remove-display');
     });
@@ -970,21 +959,31 @@ function handleCloseCompletedPopUp(){
 
 function handleBurgerMenuClick() {
     $('.top-bar-burger-icon').click(function () {
-        serverCallCategory.ajaxGetCategories();
-        $(this).addClass('remove-display');
+        $('.menu-latest-updated-Categories').find('.latest-updated-Categories-content').remove();
+        $('.menu-latest-created-Categories').find('.latest-created-Categories-content').remove();
+        showFilters.ajaxFilters();
+        $('.menu-toggle-latest5').removeClass('remove-display');
+        $('.menu-toggle-latest5-content').removeClass('remove-display');
+        $(this).addClass('sure-remove-display');
         $('.top-bar-cancel-icon').removeClass('remove-display');
         $('.left-menu-overlay').removeClass('remove-display');
-        // $('.category-menu').removeClass('remove-display');
+        $('.menu-toggle').addClass('category-menu');
+        $('.menu-toggle').addClass('sure-display');
         $('.category-menu').addClass('transform-left');
+        $('.menu-toggle-latest5-link-updated').addClass('menu-toggle-latest5-selected');
     });
 
 }
 
 function handleCancelMenuClick() {
     $('.top-bar-cancel-icon').click(function () {
-        serverCallCategory.ajaxGetCategories();
+        $('.menu-toggle').removeClass('transform-left');
+        $('.menu-toggle').removeClass('sure-display');
+        $('.menu-toggle-latest5').addClass('remove-display');
+        $('.menu-toggle-latest5-content').addClass('remove-display');
         $(this).addClass('remove-display');
-        $('.top-bar-burger-icon').removeClass('remove-display');
+        $('.menu-toggle').removeClass('category-menu');
+        $('.top-bar-burger-icon').removeClass('sure-remove-display');
         $('.category-menu').removeClass('transform-left');
         $('.left-menu-overlay').addClass('remove-display');
     });
@@ -1015,6 +1014,8 @@ function main() {
     handleCloseCompletedPopUp();
     handleBurgerMenuClick();
     handleCancelMenuClick();
+    handleLatestFilterMenu.latestFilterCreated();
+    handleLatestFilterMenu.latestFilterUpdated();
     return;
 }
 

@@ -15,16 +15,22 @@ let server;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.static(path.resolve('./client/main')));
 app.use(express.static(path.resolve('./client')));
+
 
 app.use('/categories', categoriesRouter);
 app.use('/contents', contentsRouter);
 
-app.get('/', (req, res)=>{
-   res.sendFile(path.resolve('./client'));
+
+
+app.get('/todo', (req, res)=>{
+   res.sendFile(path.resolve('./client/index.html'));
 });
 
-
+app.get('/', (req, res)=>{
+    res.sendFile(path.resolve('./client/main'));
+});
 function startServer() {
     return mongoose.connect(config.DATABASE)
         .then(() => {
