@@ -31,6 +31,7 @@ app.get('/todo', (req, res)=>{
 app.get('/', (req, res)=>{
     res.sendFile(path.resolve('./client/main'));
 });
+
 function startServer() {
     return mongoose.connect(config.DATABASE)
         .then(() => {
@@ -38,7 +39,6 @@ function startServer() {
                 server = app.listen(config.PORT, () => {
                     logger.Info(`Sever Started and Listening on Port ${config.PORT}`);
                     resolve();
-                    return;
                 }).on('error', err => {
                     logger.Error(err);
                     reject(err);
@@ -47,23 +47,25 @@ function startServer() {
         });
 }
 
-function stopServer() {
-    return mongoose.disconnect()
-        .then(() => {
-            return new Promise((resolve, reject) => {
-                server.close('error', (err) => {
-                    if (err) {
-                        logger.Error(err);
-                        reject(err);
-                    } else {
-                        resolve();
-                        return;
-                    }
-                });
+
+
+function closeServer() {
+    return mongoose.disconnect().then(() => {
+        return new Promise((resolve, reject) => {
+            logger.Info(`Sever Closing`);
+            server.close(err => {
+                if (err) {
+                    reject(err);
+                }
+                resolve();
             });
         });
+    });
 }
+
 
 if (require.main === module) {
     startServer().catch(err => logger.Error(err));
 }
+
+module.exports = {app, startServer, closeServer};

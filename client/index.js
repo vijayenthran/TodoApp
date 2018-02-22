@@ -85,11 +85,6 @@ let serverCallContents = (function () {
         return;
     }
 
-    function clearForm() {
-        $('.contents').find('.add-content-form').remove();
-        return;
-    }
-
     function appendElementsUtil(element) {
         const formElement = `<form class="add-content-form remove-display" action="/">
            <fieldset class="add-content-form-fieldset">
@@ -144,7 +139,6 @@ let serverCallContents = (function () {
         $('.categories').on('click', '.category', function () {
             $('.delete-warning-popup').addClass('remove-display');
             clearButtons();
-            clearForm();
             let categoryVal = $(this).attr('data-category');
             let id = $(this).data('id');
             _ajaxGetContents(categoryVal, id);
