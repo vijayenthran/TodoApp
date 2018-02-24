@@ -100,6 +100,12 @@
     }
 }
 
+@media screen and (min-width:300px) {
+    .content-table-text-div {
+        width: 220px;
+    }
+}
+
 @media screen and (min-width:400px) {
     .content-table-text-div {
         width: 250px;
