@@ -1,6 +1,6 @@
 'use strict';
 
-
+// Load the Category Content
 let serverCallCategory = (function () {
 
     function _populateCategories(categories) {
@@ -9,7 +9,7 @@ let serverCallCategory = (function () {
                 return `<table class="category-table">
             <tbody class="category-table-body">
                 <tr class="category-table-category">
-                    <td class="category-table-category-name"><a class="category category-${category.name}" data-category="${category.name}" data-id="${category._id}">${category.name}</a></td>
+                    <td class="category-table-category-name"><div class="category category-${category.name.split(' ').join('')}" data-category="${category.name}" data-id="${category._id}">${category.name}</div></td>
                     <td class="category-table-category-meatball remove-display"><img class="category-table-meatball-div" src="files/meatball.png" alt="meatball menu icon"></td>
                 </tr>
                 <tr class="category-buttons-row remove-display">
@@ -26,7 +26,7 @@ let serverCallCategory = (function () {
                 return `<table class="category-table">
             <tbody class="category-table-body">
                 <tr class="category-table-category">
-                    <td class="category-table-category-name"><a class="category category-${category.name}" data-category="${category.name}" data-id="${category._id}">${category.name}</a></td>
+                    <td class="category-table-category-name"><div class="category category-${category.name.split(' ').join('')}" data-category="${category.name}" data-id="${category._id}">${category.name}</div></td>
                     <td class="category-table-category-meatball"><img class="category-table-meatball-div" src="files/meatball.png" alt="meatball menu icon"></td>
                 </tr>
                 <tr class="category-buttons-row remove-display">
@@ -73,6 +73,7 @@ let serverCallCategory = (function () {
     };
 })();
 
+// Call the contents specific to the category
 let serverCallContents = (function () {
 
     function clearPreviousConents() {
@@ -172,7 +173,7 @@ let serverCallContents = (function () {
     };
 })();
 
-
+// Completed contents are marked with flag completed:true
 let handleCompletedContents = (function () {
 
     function _removeCompletedContents() {
@@ -214,6 +215,7 @@ let handleCompletedContents = (function () {
 
 })();
 
+// Get the completed contents of a specific category
 let handleShowCompletedContents = (function () {
 
     function _showCompletedContents() {
@@ -259,6 +261,7 @@ let handleShowCompletedContents = (function () {
     }
 })();
 
+// Add new item item to the category
 let handleAddContents = (function () {
     function _addContents() {
         $('.contents').on('submit', '.add-content-form', function (event) {
@@ -341,7 +344,7 @@ let handleAddContents = (function () {
 
 })();
 
-
+// add new categories
 let addCategories = (function () {
 
     function _displayAddCategory() {
@@ -367,7 +370,7 @@ let addCategories = (function () {
         const element = `    <table class="category-table">
             <tbody class="category-table-body">
                 <tr class="category-table-category">
-                    <td class="category-table-category-name"><a class="category category-${obj.name}" data-category="${obj.name}" data-id="${obj._id}">${obj.name}</a></td>
+                    <td class="category-table-category-name"><div class="category category-${obj.name.split(' ').join('')}" data-category="${obj.name}" data-id="${obj._id}">${obj.name}</div></td>
                     <td class="category-table-category-meatball"><img class="category-table-meatball-div" src="files/meatball.png" alt="meatball menu icon"></td>
                 </tr>
                 <tr class="category-buttons-row remove-display">
@@ -425,6 +428,7 @@ let addCategories = (function () {
 
 })();
 
+// handle edit contents
 let handleEditContents = (function () {
  let text;
 
@@ -509,6 +513,7 @@ let handleEditContents = (function () {
     }
 })();
 
+// Delete the content of a specific category
 let handleDeleteContents = (function () {
     function _deleteContent() {
         $('.contents-list').on('click', '.content-table-delete-button', function () {
@@ -540,6 +545,7 @@ let handleDeleteContents = (function () {
 
 })();
 
+// Edit the new categories created
 let handleEditCategories = (function () {
     let text;
     function handleMaxCategory(textVal){
@@ -693,10 +699,11 @@ let handleEditCategories = (function () {
     }
 })();
 
+// Delete the new custom category
 let handleDeleteCategories = (function () {
 
-    function _handleConfirmDelete(target, categoryId){
-        _ajaxDeleteCategory(categoryId);
+    function _handleConfirmDelete(target, categoryId) {
+            _ajaxDeleteCategory(categoryId);
             $('.delete-warning-popup').addClass('remove-display');
             $(target).closest('.category-table').remove();
             $('.contents-heading').text('Category and Content Removed, Choose other Categories To Manage or Create New Category');
@@ -720,12 +727,10 @@ let handleDeleteCategories = (function () {
 
     function _deleteConfirmation(target, categoryId){
         $('.delete-warning-popup').removeClass('remove-display');
-        $('.delete-warning-popup').on('click', '.delete-warning-popup-cancel', function(event){
-            event.stopImmediatePropagation();
+        $('.delete-warning-popup').off().on('click', '.delete-warning-popup-cancel', function(event){
             _handleCancelDelete(target);
         });
         $('.delete-warning-popup').on('click', '.delete-warning-popup-confirm', function(event){
-            event.stopImmediatePropagation();
             _handleConfirmDelete(target, categoryId);
         });
     }
@@ -741,7 +746,7 @@ let handleDeleteCategories = (function () {
 
     function _deleteCategories(){
         $('.categories-list').on('click', '.category-table-delete-button', function () {
-            let categorytext= $(this).closest('.category-table').find('.category-table-category-name a').text();
+            let categorytext= $(this).closest('.category-table').find('.category-table-category-name a').text().split(' ').join('');
             let categoryId = $(this).closest('.category-table').find(`.category-${categorytext}`).attr('data-id');
             _deleteConfirmation(this, categoryId);
             _ajaxGetContents(categoryId);
@@ -803,6 +808,7 @@ let handleDeleteCategories = (function () {
     }
 })();
 
+// get the recently created and updated items
 let showFilters = (function(){
     function displayLatest(obj){
         let topFiveUpdates = obj.topFiveUpdates;
@@ -856,6 +862,7 @@ let showFilters = (function(){
     }
 })();
 
+// get the recently created and updated items
 let handleLatestFilterMenu = (function(){
 
     function _latestFilterCreated(){
@@ -884,6 +891,7 @@ let handleLatestFilterMenu = (function(){
 
 })();
 
+// handle meat ball menu click for each contents added to category
 function handleMeatBallClick() {
     $('.contents-list').on('click', '.content-table-meatball', function(){
         if($(this).closest('.content-table').find('.content-table-text-div').attr('contenteditable')){
@@ -903,6 +911,7 @@ function handleMeatBallClick() {
     return;
 }
 
+// handle rotated meat ball menu click for each contents added to category
 function handleRotatedMeatBallClick() {
     $('.categories-list').on('click', '.category-table-category-meatball', function () {
         let textVal=$(this).closest('.category-table').find('.category-table-category-name a').text();
@@ -924,7 +933,7 @@ function handleRotatedMeatBallClick() {
     });
 }
 
-
+// handle the tick inside the checkbox
 function handleTick() {
     $('.contents-list').on('mouseenter','.content-table-checkbox' , function(){
         $(this).closest('.content-table').find('.content-table-checkbox-tick').removeClass('remove-display');
@@ -934,6 +943,7 @@ function handleTick() {
     return;
 }
 
+// handle add content show form
 function handleShowForm(){
     $('.contents').on('click', '.add-content-div .add-content-link', function() {
         $('.contents').find('.add-content-form').removeClass('remove-display');
@@ -941,6 +951,7 @@ function handleShowForm(){
     });
 }
 
+// handle add content cancel form
 function handleCancelForm(){
     $('.add-content-form').on('click', '.add-content-form-cancel', function(){
        $(this).closest('.add-content-form').find('textArea').val('');
@@ -948,6 +959,7 @@ function handleCancelForm(){
     });
 }
 
+// handle close completed pop up box
 function handleCloseCompletedPopUp(){
   $('.completed-latest-contents-close').click(function(){
       $('.completed-latest-contents').addClass('remove-display');
@@ -955,6 +967,7 @@ function handleCloseCompletedPopUp(){
   });
 }
 
+// handle burger menu for responsivenes
 function handleBurgerMenuClick() {
     $('.top-bar-burger-icon').click(function () {
         $('.menu-latest-updated-Categories').find('.latest-updated-Categories-content').remove();
@@ -973,6 +986,7 @@ function handleBurgerMenuClick() {
 
 }
 
+// handle burger menu cancel icon
 function handleCancelMenuClick() {
     $('.top-bar-cancel-icon').click(function () {
         $('.menu-toggle').removeClass('transform-left');
@@ -988,7 +1002,7 @@ function handleCancelMenuClick() {
 
 }
 
-
+// main entry point
 function main() {
     showFilters.displayFilters();
     serverCallContents.getContents();

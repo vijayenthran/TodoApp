@@ -78,6 +78,14 @@ margin-left: 5px;
     box-shadow: -5px 0 5px -5px #333, 5px 0 5px -5px #333;
 }
 
+.content-table-edit{
+    margin-left:10px;
+}
+
+.content-table-edit-button, .content-table-save-button{
+    margin-left: 10px;
+}
+
 .contents-list {
     margin-left: auto;
     margin-right: auto;
@@ -125,10 +133,6 @@ margin-left: 5px;
 .add-content-form-submit:hover,
 .add-content-div:hover,
 .category-table-category-meatball:hover,
-.category-table-edit-button:hover,
-.category-table-delete-button:hover,
-.category-table-cancel-link:hover,
-.content-table-cancel-link:hover,
 .delete-warning-popup-confirm:hover,
 .delete-warning-popup-cancel:hover,
 .top-bar-ShowCompleted:hover,
@@ -137,7 +141,8 @@ margin-left: 5px;
 .top-bar-burger-icon:hover,
 .top-bar-cancel-icon:hover,
 .menu-toggle-latest5-link-updated:hover,
-.menu-toggle-latest5-link-created:hover {
+.menu-toggle-latest5-link-created:hover,
+.content-table-cancel-link:hover{
     cursor: pointer;
 }
 
@@ -346,6 +351,11 @@ fieldset {
 
 .completedContents {
     margin-top: 10px;
+}
+
+.add-content-form-textArea{
+    border-radius: 5px;
+    width: 70%;
 }
 
 .add-content-form-textArea, .add-content-form-submit {
@@ -583,4 +593,32 @@ h2,h3, .add-content-link, .add-category-link, .show-completed-link, .sync-Latest
 
 h3{
     border-bottom: 1px solid lightgray;
+}
+
+.category-table-edit-button,
+.category-table-save-button,
+.category-table-delete-button,
+.delete-warning-popup-confirm,
+.content-table-edit-button,
+.content-table-save-button,
+.content-table-delete-button,
+.add-content-form-design-dec{
+    box-shadow: 0 0 2px black;
+}
+
+.category-table-edit-button:hover,
+.category-table-save-button:hover,
+.category-table-delete-button:hover,
+.delete-warning-popup-confirm:hover,
+.content-table-edit-button:hover,
+.content-table-save-button:hover,
+.content-table-delete-button:hover,
+.add-content-form-design-dec:hover{
+    background: #046380;
+    color : #f6f5e9;
+    cursor :pointer;
+}
+
+.category-table-category-name{
+    overflow-wrap: break-word;
 }
