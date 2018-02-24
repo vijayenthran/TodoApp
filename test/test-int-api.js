@@ -31,6 +31,7 @@ function removeContents() {
         });
 }
 
+// seed contents helper
 function seedContentData() {
     let categoryId, modifiedContentData;
     return categories.find({}).then(docs => {
