@@ -142,7 +142,8 @@ margin-left: 5px;
 .top-bar-cancel-icon:hover,
 .menu-toggle-latest5-link-updated:hover,
 .menu-toggle-latest5-link-created:hover,
-.content-table-cancel-link:hover{
+.content-table-cancel-link:hover,
+.category-table-cancel-link:hover{
     cursor: pointer;
 }
 
