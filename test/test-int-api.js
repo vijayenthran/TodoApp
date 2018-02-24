@@ -95,7 +95,7 @@ describe('Integration Test For Categories', function () {
             })
     });
 
-    it('Put call /categories', function () {
+    it('delete call /categories', function () {
         let mockObj = {name: 'new-category-updated'};
         return chai.request(app)
             .delete('/categories')

@@ -114,6 +114,10 @@ margin-left: 5px;
     margin-left: 30px;
 }
 
+.delete-warning-popup-cancel{
+    font-size: 14px;
+}
+
 .category:hover,
 .add-category-link:hover,
 .content-table-meatball:hover,
@@ -364,6 +368,7 @@ fieldset {
 
 .delete-warning-popup-text {
     margin: 0;
+    margin-right: 20px;
 }
 
 .category-table {

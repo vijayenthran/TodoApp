@@ -2,24 +2,10 @@
     box-sizing: border-box;
 }
 
-
-
-@media screen and (max-width:1520px) {
-
-    .logo{
-        width: 47%;
-        top: 10%;
-        left: 50%;
-        height: 80%
-    }
-
-}
-
-
 @media screen and (max-width:1450px) {
 
     .logo{
-        width: 49%;
+        width: 41%;
         top: 12%;
         left: 50%;
         height: 80%
@@ -29,7 +15,7 @@
 
 @media screen and (max-width:1350px) {
     .logo{
-        width: 52%;
+        width: 45%;
         top: 12%;
         left: 43%;
         height: 80%
@@ -38,9 +24,9 @@
 
 @media screen and (max-width:1250px) {
     .logo{
-        width: 52%;
+        width: 45%;
         top: 16%;
-        left: 44%;
+        left: 50%;
         height: 80%
     }
 }
@@ -62,7 +48,7 @@
     }
 
     .info{
-        top: 65%;
+        top: 75%;
         left: 0;
         right:0;
         text-align: center;
@@ -93,7 +79,7 @@
 
 @media screen and (max-width:550px) {
     .info {
-        top: 50%;
+        top: 61%;
     }
 }
 

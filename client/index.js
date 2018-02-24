@@ -137,6 +137,8 @@ let serverCallContents = (function () {
 
     function _getContents() {
         $('.categories').on('click', '.category', function () {
+            $('.add-content-link').removeClass('remove-display');
+            $('.show-completed-link').removeClass('remove-display');
             $('.delete-warning-popup').addClass('remove-display');
             clearButtons();
             let categoryVal = $(this).attr('data-category');
@@ -698,6 +700,8 @@ let handleDeleteCategories = (function () {
             $('.delete-warning-popup').addClass('remove-display');
             $(target).closest('.category-table').remove();
             $('.contents-heading').text('Category and Content Removed, Choose other Categories To Manage or Create New Category');
+            $('.add-content-link').addClass('remove-display');
+            $('.show-completed-link').addClass('remove-display');
             $('.contents-list').find('.content').remove();
             $('.contents-list').find('.add-content-form').remove();
             return;
@@ -728,7 +732,7 @@ let handleDeleteCategories = (function () {
 
     function AddText(len) {
         if(len === 0){
-            $('.delete-warning-popup-text').text(`No Items Presnt - Do you Still Want to Delete?`);
+            $('.delete-warning-popup-text').text(`No items present - Do you still want to delete?`);
         }else{
             $('.delete-warning-popup-text').text(`"${len}" Uncompleted Items Present-Do you Still Want to Delete?`);
         }

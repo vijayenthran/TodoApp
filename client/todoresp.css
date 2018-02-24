@@ -2,6 +2,19 @@
     box-sizing: border-box;
 }
 
+@media screen and (max-width:1750px) {
+    .contents{
+        margin-top: -45px;
+        padding-top: 66px;
+        height: 1000px;
+    }
+
+    .widjet, .menu-toggle{
+        margin-top: 20px;
+    }
+}
+
+
 @media screen and (max-width:1250px) {
     .contents{
         margin-top: -45px;
