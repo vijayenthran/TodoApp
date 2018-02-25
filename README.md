@@ -49,5 +49,5 @@ A simple todo App, to keep track of the list of things. Users can create differe
     - Jquery
     - MongoDB
     - Mongoose
-    - ExpressJs
+    - Expressjs
     
