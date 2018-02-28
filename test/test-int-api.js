@@ -66,6 +66,7 @@ describe('Integration Test For Categories', function () {
         return chai.request(app)
             .get('/categories')
             .then(data => {
+                console.log(data.body);
                 expect(data.statusCode).to.equal(200);
                 expect(data.body.length).to.equal(5);
             });
