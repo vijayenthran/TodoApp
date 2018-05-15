@@ -746,7 +746,7 @@ let handleDeleteCategories = (function () {
 
     function _deleteCategories(){
         $('.categories-list').on('click', '.category-table-delete-button', function () {
-            let categorytext= $(this).closest('.category-table').find('.category-table-category-name a').text().split(' ').join('');
+            let categorytext= $(this).closest('.category-table').find('.category-table-category-name div').attr('data-category');
             let categoryId = $(this).closest('.category-table').find(`.category-${categorytext}`).attr('data-id');
             _deleteConfirmation(this, categoryId);
             _ajaxGetContents(categoryId);
