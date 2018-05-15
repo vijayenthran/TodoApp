@@ -2,3 +2,10 @@ language: node_js
 node_js: node
 services:
 - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: JEFqa7KLwyJgfdKgdGNgz+q5KEP7uDpXfbd4eE37TsXgzmvHfE5eDgvn0ugzEgGyuhys4o74X+3iz6GmJnK1DlCKRFIeVs59MExzNDJplU3c0XmQAtsBWuUd2hNLM6XPKlWTyWxua4Q0k/8Q/Fuf/N2Yz3IZ/txQFAogqSsm8/EZNO51ZeT7DSLjm24qIsD0Cf1MVDAeLHD4uyWgN/cDAUPC3zqVjVMO6173xVH3SxjXM01d/MjiMlv03AiigqJokKrgFBUDIDtJakmel35f8Xnz7NHNzjyffMYHI6fZgxElwHomZQ9JT912EMZad7pYaGs1Oe6mPmRbuTYreFBDWi/DJk7VFSnLXhrBJkI8fhen8T0FRhShP7pDN0NOPZa/onrv9e9J+eYx+J3QxaPcSXLaiTgthoLC9TksdqrzPLzVqgYd4cDSARBikr6+MA/3RO1MJOxLQ/QmSY+VRtAxDegLnrkE83SHkGNQTe6i/2RyEcbE+QYXRcY5vriNDhWdbcGT9ev2hVbYmzI7KQpZ6m7yEvDsXxWHeQVvZhgATgrKzwflAGq6z+ximIvGha7j301IdaHqbd3maFbPL8rR0yCyRpYX+WSmksy/5LEBwZjgqubPSJDhIMKteGw6hFKS9+Kj0qbx96zfjdPmempN4AFVMjcqB7OcvfP3YwhBUFI=
+  app: todoeapp
+  on:
+    repo: vijayenthran/TodoApp
