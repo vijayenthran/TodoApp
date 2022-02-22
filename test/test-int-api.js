@@ -1,8 +1,5 @@
 'use strict';
 
-global.DATABASE_URL = 'mongodb://localhost/Todotest';
-
-
 const {app, startServer, closeServer} = require('../server/server');
 const {categories} = require('../server/categories/model');
 const {contents} = require('../server/contents/model');

@@ -1,0 +1,25 @@
+version: 2.1
+
+orbs:
+   heroku: circleci/heroku@1.2.6 # Invoke the Heroku orb
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:17.5.0 # the primary container, where your job's commands are run
+
+    steps:
+      - checkout # check out the code in the project directory
+      - run: npm install
+      - run: npm test
+
+workflows:
+  heroku_deploy:
+    jobs:
+      - build
+      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
