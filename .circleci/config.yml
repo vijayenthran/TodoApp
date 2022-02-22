@@ -22,4 +22,4 @@ workflows:
             - build
           filters:
             branches:
-              only: revive
+              only: master
