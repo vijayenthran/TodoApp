@@ -18,11 +18,8 @@ app.use(bodyParser.json());
 app.use(express.static(path.resolve('./client/main')));
 app.use(express.static(path.resolve('./client')));
 
-
 app.use('/categories', categoriesRouter);
 app.use('/contents', contentsRouter);
-
-
 
 app.get('/todo', (req, res)=>{
    res.sendFile(path.resolve('./client/index.html'));
@@ -31,6 +28,18 @@ app.get('/todo', (req, res)=>{
 app.get('/', (req, res)=>{
     res.sendFile(path.resolve('./client/main'));
 });
+
+// const dataFeed = [{name: 'Today'}, {name: 'Personal'}, {name: 'Errands'}, {name: 'Movies to Watch'}, {name:'Groceries'}];
+
+// function inserData() {
+//     return categories.insertMany(dataFeed)
+//         .then(docs => {
+//             return Promise.resolve();
+//         }).catch((err) => {
+//             logger.Error(err);
+//             throw err;
+//         });
+// }
 
 function startServer() {
     return mongoose.connect(config.DATABASE)
@@ -43,7 +52,7 @@ function startServer() {
                     logger.Error(err);
                     reject(err);
                 });
-            });
+            })
         });
 }
 

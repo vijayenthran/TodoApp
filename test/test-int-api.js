@@ -52,8 +52,9 @@ function seedContentData() {
 
 describe('Integration Test For Categories', function () {
     let mockUpdateId, updateContentId;
+
     before(function () {
-        return startServer();
+        return startServer().then(() => seedContentData());
     });
 
     after(function () {
@@ -103,10 +104,6 @@ describe('Integration Test For Categories', function () {
                 expect(data.statusCode).to.equal(200);
                 return categories.find({})
             }).then(docs => expect(docs.length).to.equal(5))
-    });
-
-    it('Seed Content Data', function () {
-        return seedContentData();
     });
 
     it('Create /contents', function () {
