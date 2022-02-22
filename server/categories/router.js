@@ -3,19 +3,19 @@ const router = express.Router();
 const {categories} = require('./model');
 const logger = require('../../logger');
 
-const dataFeed = [{name: 'Today'}, {name: 'Personal'}, {name: 'Errands'}, {name: 'Movies to Watch'}, {name:'Groceries'}];
+// const dataFeed = [{name: 'Today'}, {name: 'Personal'}, {name: 'Errands'}, {name: 'Movies to Watch'}, {name:'Groceries'}];
 
-function inserData() {
-    return categories.insertMany(dataFeed)
-        .then(docs => {
-            return;
-        }).catch((err) => {
-            logger.Error(err);
-            throw err;
-        });
-}
+// function inserData() {
+//     return categories.insertMany(dataFeed)
+//         .then(docs => {
+//             return;
+//         }).catch((err) => {
+//             logger.Error(err);
+//             throw err;
+//         });
+// }
 
-inserData();
+// inserData();
 
 router.get('/', (req, res) => {
     return categories.find({}).then(docs => {

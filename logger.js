@@ -1,6 +1,6 @@
 'use strict';
 
-// const colour = require('colour');
+const colour = require('colour');
 
 const logger = {
   Info : function(text) {

@@ -29,20 +29,13 @@ app.get('/', (req, res)=>{
     res.sendFile(path.resolve('./client/main'));
 });
 
-// const dataFeed = [{name: 'Today'}, {name: 'Personal'}, {name: 'Errands'}, {name: 'Movies to Watch'}, {name:'Groceries'}];
-
-// function inserData() {
-//     return categories.insertMany(dataFeed)
-//         .then(docs => {
-//             return Promise.resolve();
-//         }).catch((err) => {
-//             logger.Error(err);
-//             throw err;
-//         });
-// }
-
 function startServer() {
-    return mongoose.connect(config.DATABASE)
+    return mongoose.connect(config.DATABASE, {
+        useNewUrlParser: true,
+        useFindAndModify: false,
+        useUnifiedTopology: true,
+        useCreateIndex: true 
+        })
         .then(() => {
             return new Promise((resolve, reject) => {
                 server = app.listen(config.PORT, () => {
@@ -74,7 +67,7 @@ function closeServer() {
 
 
 if (require.main === module) {
-    startServer().catch(err => logger.Error(err));
+    startServer().catch(err => {console.dir(err); logger.Error(err)});
 }
 
 module.exports = {app, startServer, closeServer};
